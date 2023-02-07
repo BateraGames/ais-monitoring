@@ -11,6 +11,7 @@
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
     "bootstrap": "^5.3.0-alpha1",
+    "events": "^3.3.0",
     "http": "^0.0.1-security",
     "leaflet": "^1.9.3",
     "leaflet-rotatedmarker": "^0.2.0",
