@@ -8,8 +8,6 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 
 function Frame({}){
     const[currentTab, setCurrentTab] = useState(0);
-    // const[]
-
     useEffect(() =>{
         console.log(currentTab)
     }, []);

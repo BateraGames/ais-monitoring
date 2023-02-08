@@ -1,0 +1,29 @@
+{
+    "ships" : [
+        {
+            "ship_name" : "MV Toba Dreams",
+            "lat" : 3.768483,
+            "lon" : 98.7876151
+        },
+        {
+            "ship_name" : "MV Toba Dreams",
+            "lat" : 3.768483,
+            "lon" : 98.7876151
+        },
+        {
+            "ship_name" : "MV Toba Dreams",
+            "lat" : 3.768483,
+            "lon" : 98.7876151
+        },
+        {
+            "ship_name" : "MV Toba Dreams",
+            "lat" : 3.768483,
+            "lon" : 98.7876151
+        },
+        {
+            "ship_name" : "MV Toba Dreams",
+            "lat" : 3.768483,
+            "lon" : 98.7876151
+        }
+    ]
+}

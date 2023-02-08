@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react'
 import { LayersControl, Popup, Marker, useMapEvent} from "react-leaflet";
 import { MapContainer } from 'react-leaflet/MapContainer'
 import { TileLayer } from 'react-leaflet/TileLayer'
-// import {Icon} from 'react-leaflet'
 import { useMap } from 'react-leaflet/hooks'
 import RedMarker from '../../Assets/MarkerRed.png'
 import YellowMarker from '../../Assets/MarkerYellow.png'
@@ -11,7 +10,7 @@ import L from 'leaflet'
 
 const { BaseLayer, Overlay } = LayersControl;
 
-const position = [-7.250445, 112.768845];
+const position = [-7.250445, 123];
 
 const redMarker = new L.Icon({
   iconUrl: RedMarker,
@@ -31,7 +30,7 @@ const yellowMaker = new L.Icon({
 
 function MousePosTracker({setMouse}) {
   const map = useMapEvent('mousemove', (e) => {
-    setMouse([e.latlng.lat.toFixed(8), e.latlng.lng.toFixed(8)])
+    setMouse([e.latlng.lat.toFixed(3), e.latlng.lng.toFixed(3)])
   })
 }
 
@@ -42,34 +41,30 @@ function LiveMap({startPos, startZoomLev}){
   return (
       <div style={{position: 'relative', height: '100%'}}>
         <div style={{position: 'relative', height: '100%', zIndex: '0'}}>
-          <MapContainer style={{height: '100%'}} center={position} zoom={13} scrollWheelZoom={false}>
+          <MapContainer style={{height: '100%'}} center={position} zoom={5} scrollWheelZoom={false}>
             <MousePosTracker setMouse={setMousePos} />
             <LayersControl position="topleft">
               <LayersControl.BaseLayer name="OpenStreetMap" checked={true}>
                 <TileLayer
                   url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                  attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-                />
-              </LayersControl.BaseLayer>
-
-              <LayersControl.BaseLayer name="Vector">
-                <TileLayer
-                  url="https://tiles.openseamap.org/{z}/{x}/{y}.png"
-                  attribution='Map data: &copy; <a href="http://www.openseamap.org">OpenSeaMap</a> contributors'
-                />
-              </LayersControl.BaseLayer>
-
-              <LayersControl.BaseLayer name="Satelite">
-                <TileLayer
-                  url="https://tiles.openseamap.org/{z}/{x}/{y}.png"
-                  attribution='Map data: &copy; <a href="http://www.openseamap.org">OpenSeaMap</a> contributors'
                 />
               </LayersControl.BaseLayer>
 
               <LayersControl.BaseLayer name="Hybrid">
                 <TileLayer
-                  url="https://tiles.openseamap.org/{z}/{x}/{y}.png"
-                  attribution='Map data: &copy; <a href="http://www.openseamap.org">OpenSeaMap</a> contributors'
+                  url="https://www.google.cn/maps/vt?lyrs=h@189&gl=cn&x={x}&y={y}&z={z}"
+                />
+              </LayersControl.BaseLayer>
+
+              <LayersControl.BaseLayer name="Google Maps">
+                <TileLayer
+                  url="https://www.google.cn/maps/vt?lyrs=m@189&gl=cn&x={x}&y={y}&z={z}"
+                />
+              </LayersControl.BaseLayer>
+
+              <LayersControl.BaseLayer name="Maps Satelite">
+                <TileLayer
+                  url="https://www.google.cn/maps/vt?lyrs=y@189&gl=cn&x={x}&y={y}&z={z}"
                 />
               </LayersControl.BaseLayer>
 
@@ -111,7 +106,7 @@ function LiveMap({startPos, startZoomLev}){
                     Lat : {mousePos[0]}
                   </div>
                   <div style={{display: 'flex', flexDirection: 'row', width: '50%', textAlign: 'left'}}>
-                    Long : {mousePos[1]}
+                    Lon : {mousePos[1]}
                   </div>
                 </div>
               </div>
@@ -184,7 +179,6 @@ function LiveMap({startPos, startZoomLev}){
         </div>
       </div>
   );
->>>>>>> 416a6a2a43487bbc4815bc897b458f070a9c305a
 }
 
 export default LiveMap;
