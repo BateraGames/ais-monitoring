@@ -8,9 +8,9 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 
 function Frame({}){
     const[currentTab, setCurrentTab] = useState(0);
-    useEffect(() =>{
-        console.log(currentTab)
-    }, []);
+    // useEffect(() =>{
+    //     console.log(currentTab)
+    // }, []);
 
     return (
         <div className="d-flex flex-column" style={{background: '#ff0000', height: '100vh', width: '100vw'}}>

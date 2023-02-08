@@ -30,14 +30,60 @@ const yellowMaker = new L.Icon({
 
 function MousePosTracker({setMouse}) {
   const map = useMapEvent('mousemove', (e) => {
-    setMouse([e.latlng.lat.toFixed(3), e.latlng.lng.toFixed(3)])
+    setMouse([e.latlng.lat.toFixed(6), e.latlng.lng.toFixed(6)])
   })
+}
+  
+function MyMarker(props) {
+  return (
+    <Marker 
+      position={props.position} 
+      icon={props.markerGraph} 
+      eventHandlers={{
+        mouseover: (event) =>{ 
+          event.target.openPopup();
+          props.setShowInfo(true);
+        },
+        mouseout: (event) =>{
+          event.target.closePopup();
+          props.setShowInfo(false);
+        },
+    }}>
+      <Popup closeButton={false}>
+        <div style={{fontWeight: 'bold', color: '#000000'}}>KM Ibrahim Zahier</div>
+        <div className='text-secodary'>Cargo Ship</div>
+      </Popup>
+    </Marker>
+  );
 }
 
 function LiveMap({startPos, startZoomLev}){
   const[mousePos, setMousePos] = useState([0,0]);
-  const [map, setMap] = useState(null)
-
+  const [map, setMap] = useState(null);
+  const [showHoverInfo, setShowHoverInfo] = useState(false);
+  const [shipInfo, setShipInfo] = useState([
+    ['KM Abusamah',
+      '-/25413',
+      0.209,
+      110.2,
+      'Cargo Ship',
+      'Indonesia',
+      39941,
+      50476,
+    ], 
+    [ 'T. Perak Surabaya',
+      'T. Priok Jakarta',
+      '03 Feb 23, 19.00'
+    ], 
+    [ 'Kapal 1',
+      'Kapal 2',
+      'Kapal 3',
+      'Kapal 4',
+      'Kapal 5',
+      'Kapal 6',
+      'Kapal 7',
+    ]
+  ]);
   return (
       <div style={{position: 'relative', height: '100%'}}>
         <div style={{position: 'relative', height: '100%', zIndex: '0'}}>
@@ -69,9 +115,11 @@ function LiveMap({startPos, startZoomLev}){
               </LayersControl.BaseLayer>
 
               <LayersControl.Overlay name="Marker with popup" checked={true}>
-                <Marker position={position} icon={redMarker} onMouseOver={() => console.log('hover in')} onMouseOut={() => console.log('hover out')}>
-                  <Popup>A pretty CSS3 popup.<br />Easily customizable.</Popup>
-                </Marker>
+                <MyMarker
+                  position={position}
+                  markerGraph={redMarker} 
+                  setShowInfo={setShowHoverInfo}
+                />
               </LayersControl.Overlay>
             </LayersControl>
           </MapContainer>
@@ -79,24 +127,24 @@ function LiveMap({startPos, startZoomLev}){
 
         <div style={{position: 'absolute', bottom: '2vh', left: '2vh', width: '20vw', zIndex: '10' }}>
             <div style={{display: 'flex', flexDirection: 'column', gap: 5}}>
-                <div className="card">
-                  <div className="card-header">KM Abusamah</div>
+                <div className="card" style={{display: showHoverInfo ? 'block' : 'none'}}>
+                  <div className="card-header">{shipInfo[0][0]}</div>
                   <div className="card-body">
                     <div style={{display: 'flex', flexDirection: 'row', gap: 5, width: '100%', textAlign: 'left'}}>
                       <div className="card-text" style={{width: '50%'}}>IMO / MMSI</div>
-                      <div className="card-text" style={{width: '50%'}}>: -/25413</div>
+                      <div className="card-text" style={{width: '50%'}}>: {shipInfo[0][1]}</div>
                     </div>
                     <div style={{display: 'flex', flexDirection: 'row', gap: 5, width: '100%', textAlign: 'left'}}>
                       <div className="card-text" style={{width: '50%'}}>GT</div>
-                      <div className="card-text" style={{width: '50%'}}>: 39941</div>
+                      <div className="card-text" style={{width: '50%'}}>: {shipInfo[0][6]}</div>
                     </div>
                     <div style={{display: 'flex', flexDirection: 'row', gap: 5, width: '100%', textAlign: 'left'}}>
                       <div className="card-text" style={{width: '50%'}}>DWT</div>
-                      <div className="card-text" style={{width: '50%'}}>: 50476</div>
+                      <div className="card-text" style={{width: '50%'}}>: {shipInfo[0][7]}</div>
                     </div>
                     <div style={{display: 'flex', flexDirection: 'row', gap: 5, width: '100%', textAlign: 'left'}}>
                       <div className="card-text" style={{width: '50%'}}>Flag</div>
-                      <div className="card-text" style={{width: '50%'}}>: Indonesia</div>
+                      <div className="card-text" style={{width: '50%'}}>: {shipInfo[0][5]}</div>
                     </div>
                   </div>
                 </div>
@@ -120,27 +168,27 @@ function LiveMap({startPos, startZoomLev}){
               <Accordion.Body>
                 <div style={{display: 'flex', flexDirection: 'row', gap: 5, width: '100%', textAlign: 'left'}}>
                   <div className="card-text" style={{width: '50%'}}>Name</div>
-                  <div className="card-text" style={{width: '50%'}}>: KM Nama Kapal</div>
+                  <div className="card-text" style={{width: '50%'}}>: {shipInfo[0][1]}</div>
                 </div>
                 <div style={{display: 'flex', flexDirection: 'row', gap: 5, width: '100%', textAlign: 'left'}}>
                   <div className="card-text" style={{width: '50%'}}>IMO / MMSI</div>
-                  <div className="card-text" style={{width: '50%'}}>: -/25413</div>
+                  <div className="card-text" style={{width: '50%'}}>: {shipInfo[0][2]}</div>
                 </div>
                 <div style={{display: 'flex', flexDirection: 'row', gap: 5, width: '100%', textAlign: 'left'}}>
                   <div className="card-text" style={{width: '50%'}}>Lat</div>
-                  <div className="card-text" style={{width: '50%'}}>: 0.209</div>
+                  <div className="card-text" style={{width: '50%'}}>: {shipInfo[0][3]}</div>
                 </div>
                 <div style={{display: 'flex', flexDirection: 'row', gap: 5, width: '100%', textAlign: 'left'}}>
                   <div className="card-text" style={{width: '50%'}}>Long</div>
-                  <div className="card-text" style={{width: '50%'}}>: 110.2</div>
+                  <div className="card-text" style={{width: '50%'}}>: {shipInfo[0][4]}</div>
                 </div>
                 <div style={{display: 'flex', flexDirection: 'row', gap: 5, width: '100%', textAlign: 'left'}}>
                   <div className="card-text" style={{width: '50%'}}>Type</div>
-                  <div className="card-text" style={{width: '50%'}}>: Cargo</div>
+                  <div className="card-text" style={{width: '50%'}}>: {shipInfo[0][5]}</div>
                 </div>
                 <div style={{display: 'flex', flexDirection: 'row', gap: 5, width: '100%', textAlign: 'left'}}>
                   <div className="card-text" style={{width: '50%'}}>Flag</div>
-                  <div className="card-text" style={{width: '50%'}}>: Indonesia</div>
+                  <div className="card-text" style={{width: '50%'}}>: {shipInfo[0][6]}</div>
                 </div>
               </Accordion.Body>
             </Accordion.Item>
@@ -149,15 +197,15 @@ function LiveMap({startPos, startZoomLev}){
               <Accordion.Body>
                 <div style={{display: 'flex', flexDirection: 'row', gap: 5, width: '100%', textAlign: 'left'}}>
                   <div className="card-text" style={{width: '50%'}}>Origin</div>
-                  <div className="card-text" style={{width: '50%'}}>: T. Perak Surabaya</div>
+                  <div className="card-text" style={{width: '50%'}}>: {shipInfo[1][0]}</div>
                 </div>
                 <div style={{display: 'flex', flexDirection: 'row', gap: 5, width: '100%', textAlign: 'left'}}>
                   <div className="card-text" style={{width: '50%'}}>Destination</div>
-                  <div className="card-text" style={{width: '50%'}}>: T. Priok Jakarta</div>
+                  <div className="card-text" style={{width: '50%'}}>: {shipInfo[1][1]}</div>
                 </div>
                 <div style={{display: 'flex', flexDirection: 'row', gap: 5, width: '100%', textAlign: 'left'}}>
                   <div className="card-text" style={{width: '50%'}}>ETA</div>
-                  <div className="card-text" style={{width: '50%'}}>: 03 Feb 23, 19.00</div>
+                  <div className="card-text" style={{width: '50%'}}>: {shipInfo[1][2]}</div>
                 </div>
               </Accordion.Body>
             </Accordion.Item>
@@ -165,13 +213,11 @@ function LiveMap({startPos, startZoomLev}){
               <Accordion.Header>Nearest Ships</Accordion.Header>
               <Accordion.Body>
                 <div style={{display: 'flex', flexDirection: 'column', gap: 5, width: '100%', textAlign: 'left'}}>
-                  <div>1. Kapal Utama 1</div>
-                  <div>2. Kapal Lain 1</div>
-                  <div>3. Kapal Lain 2</div>
-                  <div>4. Kapal Lain 3</div>
-                  <div>5. Kapal Lain 4</div>
-                  <div>6. Kapal Lain 5</div>
-                  <div>7. Kapal Lain 6</div>
+                  <ul style={{listStyleType: 'none', paddingLeft: 0}}>
+                    {shipInfo[2].map((item, index) => (
+                      <li key={index}>{index + 1}. {item}</li>
+                    ))}
+                  </ul>
                 </div>
               </Accordion.Body>
             </Accordion.Item>
