@@ -1,19 +1,25 @@
 import { Map, TileLayer, LayersControl, Marker } from "react-leaflet";
 import LiveMap from "../Livemap/livemap";
-import React from 'react'
+import Header from "../Header/header";
+import React, {useState, useEffect} from 'react'
 import 'leaflet/dist/leaflet.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 
-const { BaseLayer, Overlay } = LayersControl;
+function Frame({}){
+    const[currentTab, setCurrentTab] = useState(0);
+    // const[]
 
-const position = [51.505, -0.09];
+    useEffect(() =>{
+        console.log(currentTab)
+    }, []);
 
-class Frame extends React.Component {
-  render() {
     return (
-        <LiveMap style={{height: '100vh'}} />
+        <div className="d-flex flex-column" style={{background: '#ff0000', height: '100vh', width: '100vw'}}>
+            <Header currentTab={currentTab} setCurrentTab={setCurrentTab} />
+            <LiveMap className='flex-fill' />
+        </div>
     );
-  }
 }
 
 export default Frame;
