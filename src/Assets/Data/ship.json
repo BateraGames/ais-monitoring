@@ -7,23 +7,33 @@
         },
         {
             "ship_name" : "MV Toba Dreams",
-            "lat" : 3.768483,
-            "lon" : 98.7876151
+            "lat" : -6.0935926,
+            "lon" : 106.8243798
         },
         {
             "ship_name" : "MV Toba Dreams",
-            "lat" : 3.768483,
-            "lon" : 98.7876151
+            "lat" : -6.7449566,
+            "lon" : 108.8786148
         },
         {
             "ship_name" : "MV Toba Dreams",
-            "lat" : 3.768483,
-            "lon" : 98.7876151
+            "lat" : -7.3443526,
+            "lon" : 112.6451745
         },
         {
             "ship_name" : "MV Toba Dreams",
-            "lat" : 3.768483,
-            "lon" : 98.7876151
+            "lat" : -4.1799051,
+            "lon" : 113.389784
+        }, 
+        {
+            "ship_name" : "MV Toba Dreams",
+            "lat" : -4.7645491,
+            "lon" : 120.5187551
+        },        
+        {
+            "ship_name" : "MV Toba Dreams",
+            "lat" : -3.1726526,
+            "lon" : 132.0550625
         }
     ]
 }

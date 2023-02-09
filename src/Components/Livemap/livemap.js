@@ -41,7 +41,7 @@ function LiveMap({startPos, startZoomLev}){
   return (
       <div style={{position: 'relative', height: '100%'}}>
         <div style={{position: 'relative', height: '100%', zIndex: '0'}}>
-          <MapContainer style={{height: '100%'}} center={position} zoom={5} scrollWheelZoom={false}>
+          <MapContainer style={{height: '100%'}} center={position} zoom={5} scrollWheelZoom={true}>
             <MousePosTracker setMouse={setMousePos} />
             <LayersControl position="topleft">
               <LayersControl.BaseLayer name="OpenStreetMap" checked={true}>
