@@ -6,7 +6,9 @@ import { useMap } from 'react-leaflet/hooks'
 import RedMarker from '../../Assets/MarkerRed.png'
 import YellowMarker from '../../Assets/MarkerYellow.png'
 import Accordion from 'react-bootstrap/Accordion';
-import L from 'leaflet'
+import ships from '../../Assets/Ships.svg'
+import L from 'leaflet';
+import './livemap.css';
 
 function MousePosTracker({setMouse}) {
   const map = useMapEvent('mousemove', (e) => {
@@ -89,7 +91,7 @@ function LiveMap({startPos, startZoomLev}){
   const { BaseLayer, Overlay } = LayersControl;
 
   const redMarker = new L.Icon({
-    iconUrl: RedMarker,
+    iconUrl: ships,
     iconSize: [25, 41],
     iconAnchor: [12, 41],
     popupAnchor: [1, -34],
