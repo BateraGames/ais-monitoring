@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react'
-import { LayersControl, Popup, Marker, useMapEvent} from "react-leaflet";
+import React, { useEffect, useState, useRef } from 'react'
+import { LayersControl, Popup, Marker, useMapEvent, ZoomControl} from "react-leaflet";
 import { MapContainer } from 'react-leaflet/MapContainer'
 import { TileLayer } from 'react-leaflet/TileLayer'
 import { useMap } from 'react-leaflet/hooks'
@@ -7,26 +7,6 @@ import RedMarker from '../../Assets/MarkerRed.png'
 import YellowMarker from '../../Assets/MarkerYellow.png'
 import Accordion from 'react-bootstrap/Accordion';
 import L from 'leaflet'
-
-const { BaseLayer, Overlay } = LayersControl;
-
-const position = [-7.250445, 123];
-
-const redMarker = new L.Icon({
-  iconUrl: RedMarker,
-  iconSize: [25, 41],
-  iconAnchor: [12, 41],
-  popupAnchor: [1, -34],
-  shadowSize: [41, 41]
-});
-
-const yellowMaker = new L.Icon({
-  iconUrl: YellowMarker,
-  iconSize: [25, 41],
-  iconAnchor: [12, 41],
-  popupAnchor: [1, -34],
-  shadowSize: [41, 41]
-});
 
 function MousePosTracker({setMouse}) {
   const map = useMapEvent('mousemove', (e) => {
@@ -48,6 +28,9 @@ function MyMarker(props) {
           event.target.closePopup();
           props.setShowInfo(false);
         },
+        click: (event) =>{
+          props.setZoomMode(prev => !prev)
+        },
     }}>
       <Popup closeButton={false}>
         <div style={{fontWeight: 'bold', color: '#000000'}}>KM Ibrahim Zahier</div>
@@ -58,9 +41,11 @@ function MyMarker(props) {
 }
 
 function LiveMap({startPos, startZoomLev}){
-  const[mousePos, setMousePos] = useState([0,0]);
-  const [map, setMap] = useState(null);
+  const mapRef = useRef(null);
+  const [mousePos, setMousePos] = useState([0,0]);
   const [showHoverInfo, setShowHoverInfo] = useState(false);
+  const [position, setPosition] = useState([-2.787828, 119.707031]);
+  const [zoomPower, setZoomPower] = useState([-2.787828, 119.707031]);
   const [shipInfo, setShipInfo] = useState([
     ['KM Abusamah',
       '-/25413',
@@ -75,19 +60,65 @@ function LiveMap({startPos, startZoomLev}){
       'T. Priok Jakarta',
       '03 Feb 23, 19.00'
     ], 
-    [ 'Kapal 1',
-      'Kapal 2',
-      'Kapal 3',
-      'Kapal 4',
-      'Kapal 5',
-      'Kapal 6',
-      'Kapal 7',
+    [ 'Kapal Kargo 1',
+      'Kapal Kargo 2',
+      'Kapal Kargo 3',
+      'Kapal Kargo 4',
+      'Kapal Kargo 5',
+      'Kapal Kargo 6',
+      'Kapal Kargo 7',
     ]
   ]);
+
+  const defaultZoom = 5
+  const detailedZoom = 8
+
+  const [zoomMode, setZoomMode] = useState(false);
+
+  const [markers, setMarkers] = useState([
+    {
+      position: [51.5, -0.1],
+      content: 'Marker 1'
+    },
+    {
+      position: [51.51, -0.09],
+      content: 'Marker 2'
+    },
+  ]);
+
+  const { BaseLayer, Overlay } = LayersControl;
+
+  const redMarker = new L.Icon({
+    iconUrl: RedMarker,
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+    popupAnchor: [1, -34],
+    shadowSize: [41, 41]
+  });
+
+  const yellowMaker = new L.Icon({
+    iconUrl: YellowMarker,
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+    popupAnchor: [1, -34],
+    shadowSize: [41, 41]
+  });
+
+  useEffect(() => {
+    if(mapRef.current == null) return;
+    console.log(zoomMode)
+    console.log(mapRef.current);
+    if(zoomMode){
+      // mapRef.current.zoom = detailedZoom;
+    }else{
+      // mapRef.current.zoom = defaultZoom
+    }
+  }, [zoomMode])
+
   return (
       <div style={{position: 'relative', height: '100%'}}>
         <div style={{position: 'relative', height: '100%', zIndex: '0'}}>
-          <MapContainer style={{height: '100%'}} center={position} zoom={5} scrollWheelZoom={true}>
+          <MapContainer ref={mapRef} style={{height: '100%'}} center={position} zoom={zoomMode ? detailedZoom : defaultZoom} scrollWheelZoom={false}>
             <MousePosTracker setMouse={setMousePos} />
             <LayersControl position="topleft">
               <LayersControl.BaseLayer name="OpenStreetMap" checked={true}>
@@ -119,6 +150,7 @@ function LiveMap({startPos, startZoomLev}){
                   position={position}
                   markerGraph={redMarker} 
                   setShowInfo={setShowHoverInfo}
+                  setZoomMode={setZoomMode}
                 />
               </LayersControl.Overlay>
             </LayersControl>
@@ -127,7 +159,7 @@ function LiveMap({startPos, startZoomLev}){
 
         <div style={{position: 'absolute', bottom: '2vh', left: '2vh', width: '20vw', zIndex: '10' }}>
             <div style={{display: 'flex', flexDirection: 'column', gap: 5}}>
-                <div className="card" style={{display: showHoverInfo ? 'block' : 'none'}}>
+                <div className="card" style={{display: showHoverInfo ? 'block' : 'none', background: 'rgba(255,255,255,0.5)'}}>
                   <div className="card-header">{shipInfo[0][0]}</div>
                   <div className="card-body">
                     <div style={{display: 'flex', flexDirection: 'row', gap: 5, width: '100%', textAlign: 'left'}}>
@@ -160,12 +192,11 @@ function LiveMap({startPos, startZoomLev}){
               </div>
             </div>
         </div>
-
-        <div style={{background:'#ffffff', position: 'absolute', top: '1vh', right: '1vh', width: '20vw', height: '90vh', zIndex: '10', borderRadius: 5 }}>
-          <Accordion defaultActiveKey={['0', '1', '2']} alwaysOpen>
-            <Accordion.Item eventKey="0">
-              <Accordion.Header>Ship Information</Accordion.Header>
-              <Accordion.Body>
+        <div style={{position: 'absolute', top: '1vh', right: '1vh', width: '20vw', height: '90vh', zIndex: '10', borderRadius: 5 }}>
+          <Accordion defaultActiveKey={['0', '1', '2']} alwaysOpen >
+            <Accordion.Item eventKey="0" style={{background: 'rgba(255,255,255,0.6)'}}>
+              <Accordion.Header >Ship Information</Accordion.Header>
+              <Accordion.Body >
                 <div style={{display: 'flex', flexDirection: 'row', gap: 5, width: '100%', textAlign: 'left'}}>
                   <div className="card-text" style={{width: '50%'}}>Name</div>
                   <div className="card-text" style={{width: '50%'}}>: {shipInfo[0][1]}</div>
@@ -192,7 +223,7 @@ function LiveMap({startPos, startZoomLev}){
                 </div>
               </Accordion.Body>
             </Accordion.Item>
-            <Accordion.Item eventKey="1">
+            <Accordion.Item eventKey="1" style={{background: 'rgba(255,255,255,0.6)'}}>
               <Accordion.Header>Voyage Information</Accordion.Header>
               <Accordion.Body>
                 <div style={{display: 'flex', flexDirection: 'row', gap: 5, width: '100%', textAlign: 'left'}}>
@@ -209,7 +240,7 @@ function LiveMap({startPos, startZoomLev}){
                 </div>
               </Accordion.Body>
             </Accordion.Item>
-            <Accordion.Item eventKey="2">
+            <Accordion.Item eventKey="2" style={{background: 'rgba(255,255,255,0.6)'}}>
               <Accordion.Header>Nearest Ships</Accordion.Header>
               <Accordion.Body>
                 <div style={{display: 'flex', flexDirection: 'column', gap: 5, width: '100%', textAlign: 'left'}}>
