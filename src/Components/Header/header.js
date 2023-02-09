@@ -13,7 +13,7 @@ function Header({currentTab, setCurrentTab}){
                         <button className={currentTab === 0 ? "nav-link text-dark bg-light" : "nav-link text-light bg-primary"} style={{borderRadius: 20, border: '1px solid transparent'}} onClick={() => setCurrentTab(0)}>Live Map</button>
                     </li>
                     <li className="nav-item">
-                        <button className={"nav-link text-secondary bg-primary"}  style={{borderRadius: 20, border: '1px solid transparent'}} >Weather</button>
+                        <button className={"nav-link bg-primary"}  style={{color: 'rgba(200,200,200,1)', borderRadius: 20, border: '1px solid transparent'}} >Weather</button>
                     </li>
                     <li className="nav-item">
                         <button className={currentTab === 2 ? "nav-link text-dark bg-light" : "nav-link text-light bg-primary"}  style={{borderRadius: 20, border: '1px solid transparent'}} onClick={() => setCurrentTab(2)}>Coverages</button>
