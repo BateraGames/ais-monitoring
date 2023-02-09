@@ -1,15 +1,15 @@
 {
   "files": {
-    "main.css": "/ais-monitoring/static/css/main.f9dc4ede.css",
-    "main.js": "/ais-monitoring/static/js/main.f5596e00.js",
-    "static/media/logo batera kapal pintar-BW.png": "/ais-monitoring/static/media/logo batera kapal pintar-BW.0d2d8859f413a286560a.png",
-    "static/media/logo.svg": "/ais-monitoring/static/media/logo.6ce24c58023cc2f8fd88fe9d219db6c6.svg",
-    "index.html": "/ais-monitoring/index.html",
-    "main.f9dc4ede.css.map": "/ais-monitoring/static/css/main.f9dc4ede.css.map",
-    "main.f5596e00.js.map": "/ais-monitoring/static/js/main.f5596e00.js.map"
+    "main.css": "./static/css/main.a44fa054.css",
+    "main.js": "./static/js/main.6c9e6a3d.js",
+    "static/media/logo batera kapal pintar-BW.png": "./static/media/logo batera kapal pintar-BW.0d2d8859f413a286560a.png",
+    "static/media/logo.svg": "./static/media/logo.6ce24c58023cc2f8fd88fe9d219db6c6.svg",
+    "index.html": "./index.html",
+    "main.a44fa054.css.map": "./static/css/main.a44fa054.css.map",
+    "main.6c9e6a3d.js.map": "./static/js/main.6c9e6a3d.js.map"
   },
   "entrypoints": [
-    "static/css/main.f9dc4ede.css",
-    "static/js/main.f5596e00.js"
+    "static/css/main.a44fa054.css",
+    "static/js/main.6c9e6a3d.js"
   ]
 }
