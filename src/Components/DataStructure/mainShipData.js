@@ -1,6 +1,3 @@
-import {EventEmitter} from 'events'
-import ShipInfo from './shipInfo'
-import VoyageInfo from './voyageInfo'
 import ShipData from './shipData'
 
 export default class MainShipData extends ShipData{
@@ -14,14 +11,8 @@ export default class MainShipData extends ShipData{
         this.NearestShips.forEach(element => {
             element.NearestShips = nameArrays;
         });
-    }
-
-    getShipInfo(){
-        return [this.shipName, this.mmsi, this.lat, this.lon, this.type, this.flag, this.gt, this.dwt]
-    }
-
-    getVoyageInfo(){
-        return [this.origin, this.destination, this.ETA]
+        this.mainShip = true;
+        
     }
 
     getNearestShip(){

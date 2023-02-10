@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react'
-import { LayersControl, Popup, Marker, useMapEvent, ZoomControl} from "react-leaflet";
+import { LayersControl, Popup, Marker, useMapEvent, DivIcon, ZoomControl} from "react-leaflet";
 import { MapContainer } from 'react-leaflet/MapContainer'
 import { TileLayer } from 'react-leaflet/TileLayer'
 import { useMap } from 'react-leaflet/hooks'
@@ -7,8 +7,11 @@ import RedMarker from '../../Assets/MarkerRed.png'
 import YellowMarker from '../../Assets/MarkerYellow.png'
 import Accordion from 'react-bootstrap/Accordion';
 import ships from '../../Assets/Ships.svg'
+import shipsYellow from '../../Assets/ShipsYellow.svg'
 import L from 'leaflet';
 import './livemap.css';
+// import ReactLeafletDriftMarker from "react-leaflet-drift-marker"
+
 
 function MousePosTracker({setMouse}) {
   const map = useMapEvent('mousemove', (e) => {
@@ -16,14 +19,15 @@ function MousePosTracker({setMouse}) {
   })
 }
   
-function MyMarker(props) {
+function CustomRedMarker(props) {
   return (
     <Marker 
-      position={props.position} 
+      position={[props.details.ShipInfo.lat, props.details.ShipInfo.long]} 
       icon={props.markerGraph} 
       eventHandlers={{
         mouseover: (event) =>{ 
           event.target.openPopup();
+          props.setHoverInfo(props.details.getAllData())
           props.setShowInfo(true);
         },
         mouseout: (event) =>{
@@ -31,24 +35,66 @@ function MyMarker(props) {
           props.setShowInfo(false);
         },
         click: (event) =>{
+          event.target.openPopup();
+          props.setShipInfo(props.details.getAllData())
+          props.setSelectedMarkerPos([props.details.ShipInfo.lat, props.details.ShipInfo.long]);
+          if(props.zoomMode){
+            props.setSecondaryMarkers([]);
+          }else{
+            props.setSecondaryMarkers(props.details.NearestShips);
+          }
           props.setZoomMode(prev => !prev)
         },
     }}>
       <Popup closeButton={false}>
-        <div style={{fontWeight: 'bold', color: '#000000'}}>KM Ibrahim Zahier</div>
-        <div className='text-secodary'>Cargo Ship</div>
+        <div style={{fontWeight: 'bold', color: '#000000'}}>{props.details.ShipInfo.shipName}</div>
+        <div className='text-secodary'>{props.details.ShipInfo.type}</div>
       </Popup>
     </Marker>
   );
 }
 
-function LiveMap({startPos, startZoomLev}){
+function CustomYellowMarker(props) {
+  return (
+    <Marker 
+      position={[props.details.ShipInfo.lat, props.details.ShipInfo.long]} 
+      icon={props.markerGraph} 
+      eventHandlers={{
+        mouseover: (event) =>{ 
+          event.target.openPopup();
+          props.setHoverInfo(props.details.getAllData())
+          props.setShowInfo(true);
+        },
+        mouseout: (event) =>{
+          event.target.closePopup();
+          props.setShowInfo(false);
+        },
+        click: (event) =>{
+          event.target.openPopup();
+          props.setShipInfo(props.details.getAllData())
+          // props.setZoomMode(prev => !prev)
+        },
+    }}>
+      <Popup closeButton={false}>
+        <div style={{fontWeight: 'bold', color: '#000000'}}>{props.details.ShipInfo.shipName}</div>
+        <div className='text-secodary'>{props.details.ShipInfo.type}</div>
+      </Popup>
+    </Marker>
+  );
+}
+
+function LiveMap({shipDatabase}){
   const mapRef = useRef(null);
   const [mousePos, setMousePos] = useState([0,0]);
   const [showHoverInfo, setShowHoverInfo] = useState(false);
-  const [position, setPosition] = useState([-2.787828, 119.707031]);
-  const [zoomPower, setZoomPower] = useState([-2.787828, 119.707031]);
-  const [shipInfo, setShipInfo] = useState([
+  const defaultPosition = [-2.787828, 119.707031];
+  const [selectedMarkerPos, setSelectedMarkerPos] = useState([-2.787828, 119.707031]);
+  const defaultZoom = 5;
+  const detailedZoom = 10;
+  const [markers, setMarkers] = useState(shipDatabase.ShipList);
+  const [secondaryMarkers, setSecondaryMarkers] = useState([]);
+  const [shipInfo, setShipInfo] = useState(shipDatabase.ShipList[0].getAllData());
+  const [hoverInfo, setHoverInfo] = useState([
     ['KM Abusamah',
       '-/25413',
       0.209,
@@ -72,55 +118,42 @@ function LiveMap({startPos, startZoomLev}){
     ]
   ]);
 
-  const defaultZoom = 5
-  const detailedZoom = 8
-
   const [zoomMode, setZoomMode] = useState(false);
-
-  const [markers, setMarkers] = useState([
-    {
-      position: [51.5, -0.1],
-      content: 'Marker 1'
-    },
-    {
-      position: [51.51, -0.09],
-      content: 'Marker 2'
-    },
-  ]);
 
   const { BaseLayer, Overlay } = LayersControl;
 
   const redMarker = new L.Icon({
     iconUrl: ships,
-    iconSize: [25, 41],
-    iconAnchor: [12, 41],
-    popupAnchor: [1, -34],
-    shadowSize: [41, 41]
+    iconSize: [50, 50],
+    iconAnchor: [25, 25],
+    popupAnchor: [0, -20]
   });
 
   const yellowMaker = new L.Icon({
-    iconUrl: YellowMarker,
-    iconSize: [25, 41],
-    iconAnchor: [12, 41],
-    popupAnchor: [1, -34],
-    shadowSize: [41, 41]
+    iconUrl: shipsYellow,
+    iconSize: [40, 40],
+    iconAnchor: [20, 20],
+    popupAnchor: [0, -20]
   });
 
   useEffect(() => {
     if(mapRef.current == null) return;
-    console.log(zoomMode)
-    console.log(mapRef.current);
     if(zoomMode){
-      // mapRef.current.zoom = detailedZoom;
+      mapRef.current.setView(selectedMarkerPos, detailedZoom)
     }else{
-      // mapRef.current.zoom = defaultZoom
+      mapRef.current.setView(defaultPosition, defaultZoom)
     }
   }, [zoomMode])
 
   return (
       <div style={{position: 'relative', height: '100%'}}>
         <div style={{position: 'relative', height: '100%', zIndex: '0'}}>
-          <MapContainer ref={mapRef} style={{height: '100%'}} center={position} zoom={zoomMode ? detailedZoom : defaultZoom} scrollWheelZoom={false}>
+          <MapContainer ref={mapRef} 
+            style={{height: '100%'}} 
+            center={defaultPosition} 
+            zoom={defaultZoom} 
+            scrollWheelZoom={false}
+            >
             <MousePosTracker setMouse={setMousePos} />
             <LayersControl position="topleft">
               <LayersControl.BaseLayer name="OpenStreetMap" checked={true}>
@@ -148,12 +181,36 @@ function LiveMap({startPos, startZoomLev}){
               </LayersControl.BaseLayer>
 
               <LayersControl.Overlay name="Marker with popup" checked={true}>
-                <MyMarker
-                  position={position}
-                  markerGraph={redMarker} 
-                  setShowInfo={setShowHoverInfo}
-                  setZoomMode={setZoomMode}
-                />
+                {markers.map((marker, index) => {
+                  return (
+                    <CustomRedMarker key={index} 
+                    details = {marker}
+                    markerGraph={redMarker}
+                    setShowInfo={setShowHoverInfo}
+                    setZoomMode={setZoomMode}
+                    setSelectedMarkerPos={setSelectedMarkerPos} 
+                    setHoverInfo={setHoverInfo}
+                    setShipInfo={setShipInfo}
+                    setSecondaryMarkers={setSecondaryMarkers}
+                    zoomMode={zoomMode}
+                    />
+                  )
+                })}
+
+                {secondaryMarkers.map((marker, index) => {
+                  return (
+                    <CustomYellowMarker key={index} 
+                    details = {marker}
+                    markerGraph={yellowMaker}
+                    setShowInfo={setShowHoverInfo}
+                    setZoomMode={setZoomMode}
+                    setSelectedMarkerPos={setSelectedMarkerPos}
+                    setHoverInfo={setHoverInfo} 
+                    setShipInfo={setShipInfo} 
+                    zoomMode={zoomMode}
+                    />
+                  )
+                })}
               </LayersControl.Overlay>
             </LayersControl>
           </MapContainer>
@@ -162,23 +219,23 @@ function LiveMap({startPos, startZoomLev}){
         <div style={{position: 'absolute', bottom: '2vh', left: '2vh', width: '20vw', zIndex: '10' }}>
             <div style={{display: 'flex', flexDirection: 'column', gap: 5}}>
                 <div className="card" style={{display: showHoverInfo ? 'block' : 'none', background: 'rgba(255,255,255,0.5)'}}>
-                  <div className="card-header">{shipInfo[0][0]}</div>
+                  <div className="card-header">{hoverInfo[0][0]}</div>
                   <div className="card-body">
                     <div style={{display: 'flex', flexDirection: 'row', gap: 5, width: '100%', textAlign: 'left'}}>
                       <div className="card-text" style={{width: '50%'}}>IMO / MMSI</div>
-                      <div className="card-text" style={{width: '50%'}}>: {shipInfo[0][1]}</div>
+                      <div className="card-text" style={{width: '50%'}}>: {hoverInfo[0][1]}</div>
                     </div>
                     <div style={{display: 'flex', flexDirection: 'row', gap: 5, width: '100%', textAlign: 'left'}}>
                       <div className="card-text" style={{width: '50%'}}>GT</div>
-                      <div className="card-text" style={{width: '50%'}}>: {shipInfo[0][6]}</div>
+                      <div className="card-text" style={{width: '50%'}}>: {hoverInfo[0][6]}</div>
                     </div>
                     <div style={{display: 'flex', flexDirection: 'row', gap: 5, width: '100%', textAlign: 'left'}}>
                       <div className="card-text" style={{width: '50%'}}>DWT</div>
-                      <div className="card-text" style={{width: '50%'}}>: {shipInfo[0][7]}</div>
+                      <div className="card-text" style={{width: '50%'}}>: {hoverInfo[0][7]}</div>
                     </div>
                     <div style={{display: 'flex', flexDirection: 'row', gap: 5, width: '100%', textAlign: 'left'}}>
                       <div className="card-text" style={{width: '50%'}}>Flag</div>
-                      <div className="card-text" style={{width: '50%'}}>: {shipInfo[0][5]}</div>
+                      <div className="card-text" style={{width: '50%'}}>: {hoverInfo[0][5]}</div>
                     </div>
                   </div>
                 </div>
@@ -201,27 +258,27 @@ function LiveMap({startPos, startZoomLev}){
               <Accordion.Body >
                 <div style={{display: 'flex', flexDirection: 'row', gap: 5, width: '100%', textAlign: 'left'}}>
                   <div className="card-text" style={{width: '50%'}}>Name</div>
-                  <div className="card-text" style={{width: '50%'}}>: {shipInfo[0][1]}</div>
+                  <div className="card-text" style={{width: '50%'}}>: {shipInfo[0][0]}</div>
                 </div>
                 <div style={{display: 'flex', flexDirection: 'row', gap: 5, width: '100%', textAlign: 'left'}}>
                   <div className="card-text" style={{width: '50%'}}>IMO / MMSI</div>
-                  <div className="card-text" style={{width: '50%'}}>: {shipInfo[0][2]}</div>
+                  <div className="card-text" style={{width: '50%'}}>: {shipInfo[0][1]}</div>
                 </div>
                 <div style={{display: 'flex', flexDirection: 'row', gap: 5, width: '100%', textAlign: 'left'}}>
                   <div className="card-text" style={{width: '50%'}}>Lat</div>
-                  <div className="card-text" style={{width: '50%'}}>: {shipInfo[0][3]}</div>
+                  <div className="card-text" style={{width: '50%'}}>: {shipInfo[0][2]}</div>
                 </div>
                 <div style={{display: 'flex', flexDirection: 'row', gap: 5, width: '100%', textAlign: 'left'}}>
                   <div className="card-text" style={{width: '50%'}}>Long</div>
-                  <div className="card-text" style={{width: '50%'}}>: {shipInfo[0][4]}</div>
+                  <div className="card-text" style={{width: '50%'}}>: {shipInfo[0][3]}</div>
                 </div>
                 <div style={{display: 'flex', flexDirection: 'row', gap: 5, width: '100%', textAlign: 'left'}}>
                   <div className="card-text" style={{width: '50%'}}>Type</div>
-                  <div className="card-text" style={{width: '50%'}}>: {shipInfo[0][5]}</div>
+                  <div className="card-text" style={{width: '50%'}}>: {shipInfo[0][4]}</div>
                 </div>
                 <div style={{display: 'flex', flexDirection: 'row', gap: 5, width: '100%', textAlign: 'left'}}>
                   <div className="card-text" style={{width: '50%'}}>Flag</div>
-                  <div className="card-text" style={{width: '50%'}}>: {shipInfo[0][6]}</div>
+                  <div className="card-text" style={{width: '50%'}}>: {shipInfo[0][5]}</div>
                 </div>
               </Accordion.Body>
             </Accordion.Item>
@@ -255,6 +312,7 @@ function LiveMap({startPos, startZoomLev}){
               </Accordion.Body>
             </Accordion.Item>
           </Accordion>
+          {/* <img src={RedMarker} width={1000} height={1000} style={{rotate: '90deg'}} /> */}
         </div>
       </div>
   );

@@ -1,25 +1,26 @@
-import {EventEmitter} from 'events'
-import ShipInfo from './shipInfo'
-import VoyageInfo from './voyageInfo'
-
-export default class ShipData extends EventEmitter{
+export default class ShipData{
 
     constructor(ShipInfo, VoyageInfo, NearestShips) {
-        super()
         this.ShipInfo = ShipInfo;
         this.VoyageInfo = VoyageInfo;
         this.NearestShips = NearestShips;
+        this.emergencySOS = false;
+        this.mainShip = false;
     }
 
     getShipInfo(){
-        return [this.shipName, this.mmsi, this.lat, this.lon, this.type, this.flag, this.gt, this.dwt]
+        return this.ShipInfo.getShipInfo()
     }
 
     getVoyageInfo(){
-        return [this.origin, this.destination, this.ETA]
+        return this.VoyageInfo.getVoyageInfo()
     }
 
     getNearestShip(){
         return this.NearestShips
+    }
+
+    getAllData(){
+        return [this.getShipInfo(), this.getVoyageInfo(), this.getNearestShip()];
     }
 }
