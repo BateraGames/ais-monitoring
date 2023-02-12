@@ -10,6 +10,7 @@ import ships from '../../Assets/Ships.svg'
 import shipsYellow from '../../Assets/ShipsYellow.svg'
 import L from 'leaflet';
 import './livemap.css';
+import SOS_Icon from '../../Assets/SOS_Icon.png'
 // import ReactLeafletDriftMarker from "react-leaflet-drift-marker"
 
 
@@ -83,6 +84,21 @@ function CustomYellowMarker(props) {
   );
 }
 
+function SOSMarker(props) {
+  return (
+    <Marker 
+      position={[props.details.ShipInfo.lat, props.details.ShipInfo.long]} 
+      icon={props.markerGraph} >
+    </Marker>
+  );
+}
+
+function getRandomInt(min, max) {
+  min = Math.ceil(min);
+  max = Math.floor(max);
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
 function LiveMap({shipDatabase}){
   const mapRef = useRef(null);
   const [mousePos, setMousePos] = useState([0,0]);
@@ -93,6 +109,7 @@ function LiveMap({shipDatabase}){
   const detailedZoom = 10;
   const [markers, setMarkers] = useState(shipDatabase.ShipList);
   const [secondaryMarkers, setSecondaryMarkers] = useState([]);
+  const [sosMakerList, setSOSMarkersList] = useState([]);
   const [shipInfo, setShipInfo] = useState(shipDatabase.ShipList[0].getAllData());
   const [hoverInfo, setHoverInfo] = useState([
     ['KM Abusamah',
@@ -119,6 +136,7 @@ function LiveMap({shipDatabase}){
   ]);
 
   const [zoomMode, setZoomMode] = useState(false);
+  const [refresher, setRefresher] = useState(false);
 
   const { BaseLayer, Overlay } = LayersControl;
 
@@ -135,6 +153,38 @@ function LiveMap({shipDatabase}){
     iconAnchor: [20, 20],
     popupAnchor: [0, -20]
   });
+
+  const sosMaker = new L.Icon({
+    iconUrl: SOS_Icon,
+    iconSize: [30, 50],
+    iconAnchor: [15, 50]
+  });
+
+  useEffect(() => {
+    if(secondaryMarkers.length != 0){
+      let randTarget = getRandomInt(0, secondaryMarkers.length-1);
+      secondaryMarkers[randTarget].emergencySOS = true;
+      setRefresher(prev => !prev)
+    }
+    const intervalId = setInterval(() => {
+      if(secondaryMarkers.length != 0){
+        secondaryMarkers.map((item, index) => {
+          secondaryMarkers[index].emergencySOS = false;
+        })
+
+        let randTarget = getRandomInt(0, secondaryMarkers.length-1);
+        secondaryMarkers[randTarget].emergencySOS = true;
+        setRefresher(prev => !prev)
+      }
+    }, 5000);
+    return () => {
+      clearInterval(intervalId);
+    };
+  }, [secondaryMarkers]);
+
+  // useEffect(() => {
+  //   console.log(sosMakerList)
+  // }, [sosMakerList])
 
   useEffect(() => {
     if(mapRef.current == null) return;
@@ -210,6 +260,22 @@ function LiveMap({shipDatabase}){
                     zoomMode={zoomMode}
                     />
                   )
+                })}
+                {secondaryMarkers.map((marker, index) => {
+                  if (marker.emergencySOS) {
+                    return (
+                      <SOSMarker key={index} 
+                      details = {marker}
+                      markerGraph={sosMaker}
+                      setShowInfo={setShowHoverInfo}
+                      setZoomMode={setZoomMode}
+                      setSelectedMarkerPos={setSelectedMarkerPos}
+                      setHoverInfo={setHoverInfo} 
+                      setShipInfo={setShipInfo} 
+                      zoomMode={zoomMode}
+                      />
+                    )
+                  }
                 })}
               </LayersControl.Overlay>
             </LayersControl>

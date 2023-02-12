@@ -15,6 +15,7 @@
     "gh-pages": "^5.0.0",
     "http": "^0.0.1-security",
     "leaflet": "^1.9.3",
+    "leaflet-marker-rotation": "^0.4.0",
     "leaflet-rotatedmarker": "^0.2.0",
     "path": "^0.12.7",
     "react": "^18.2.0",
@@ -22,6 +23,7 @@
     "react-dom": "^18.2.0",
     "react-icons": "^4.7.1",
     "react-leaflet": "^4.2.0",
+    "react-leaflet-drift-marker": "^4.0.0",
     "react-scripts": "5.0.1",
     "web-vitals": "^2.1.4"
   },
@@ -29,7 +31,7 @@
     "electron": "^22.0.0",
     "electron-rebuild": "^3.2.9"
   },
-  "main": "public/main.js", 
+  "main": "public/main.js",
   "homepage": "./",
   "scripts": {
     "start": "electron .",
