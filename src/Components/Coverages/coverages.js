@@ -6,7 +6,7 @@ import Accordion from 'react-bootstrap/Accordion';
 import ships from '../../Assets/Ships.svg'
 import shipsYellow from '../../Assets/ShipsYellow.svg'
 import L from 'leaflet';
-import './livemap.css';
+import '../Livemap/livemap.css';
 import SOS_Icon from '../../Assets/SOS_Icon.png'
 import "leaflet-rotatedmarker";
 
@@ -132,7 +132,7 @@ function getRandomInt(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-function LiveMap({shipDatabase, currentTab}){
+function Coverages({shipDatabase, currentTab}){
   const mapRef = useRef(null);
   const [mousePos, setMousePos] = useState([0,0]);
   const [showHoverInfo, setShowHoverInfo] = useState(false);
@@ -210,19 +210,19 @@ function LiveMap({shipDatabase, currentTab}){
   useEffect(() => {
     setZoomMode(false)
     const autoFix = setInterval(() => {
-      fixSize()
-    }, 500);
-    return () => {
-      clearInterval(autoFix);
-    };
+        fixSize()
+      }, 500);
+      return () => {
+        clearInterval(autoFix);
+      };
   }, [])
 
   useEffect(() => {
     if(currentTab){
-        document.getElementById("LiveMap").hidden = false;
-        fixSize()
+        document.getElementById("Coverages").hidden = false;
+        fixSize();
     }else{
-        document.getElementById("LiveMap").hidden = true;
+        document.getElementById("Coverages").hidden = true;
         fixSize()
     }
   }, [currentTab])
@@ -231,7 +231,6 @@ function LiveMap({shipDatabase, currentTab}){
     fixSize()
   }, [mapRef])
 
-
   function fixSize() {
     if (mapRef.current) {
       mapRef.current.invalidateSize();
@@ -239,7 +238,7 @@ function LiveMap({shipDatabase, currentTab}){
   }
 
   return (
-      <div id='LiveMap' style={{position: 'relative', height: '100%'}} hidden>
+      <div id='Coverages' style={{position: 'relative', height: '100%'}}>
         <div style={{position: 'relative', height: '100%', zIndex: '0'}}>
           <MapContainer ref={mapRef} 
             style={{height: '100%'}} 
@@ -358,71 +357,8 @@ function LiveMap({shipDatabase, currentTab}){
               </div>
             </div>
         </div>
-        <div style={{position: 'absolute', top: '1vh', right: '1vh', width: '20vw', height: '90vh', zIndex: '10', borderRadius: 5 }}>
-          <Accordion defaultActiveKey={['0', '1', '2']} alwaysOpen >
-            <Accordion.Item eventKey="0" style={{background: 'rgba(255,255,255,0.6)'}}>
-              <Accordion.Header >Ship Information</Accordion.Header>
-              <Accordion.Body >
-                <div style={{display: 'flex', flexDirection: 'row', gap: 5, width: '100%', textAlign: 'left'}}>
-                  <div className="card-text" style={{width: '50%'}}>Name</div>
-                  <div className="card-text" style={{width: '50%'}}>: {shipInfo[0][0]}</div>
-                </div>
-                <div style={{display: 'flex', flexDirection: 'row', gap: 5, width: '100%', textAlign: 'left'}}>
-                  <div className="card-text" style={{width: '50%'}}>IMO / MMSI</div>
-                  <div className="card-text" style={{width: '50%'}}>: {shipInfo[0][1]}</div>
-                </div>
-                <div style={{display: 'flex', flexDirection: 'row', gap: 5, width: '100%', textAlign: 'left'}}>
-                  <div className="card-text" style={{width: '50%'}}>Lat</div>
-                  <div className="card-text" style={{width: '50%'}}>: {shipInfo[0][2]}</div>
-                </div>
-                <div style={{display: 'flex', flexDirection: 'row', gap: 5, width: '100%', textAlign: 'left'}}>
-                  <div className="card-text" style={{width: '50%'}}>Long</div>
-                  <div className="card-text" style={{width: '50%'}}>: {shipInfo[0][3]}</div>
-                </div>
-                <div style={{display: 'flex', flexDirection: 'row', gap: 5, width: '100%', textAlign: 'left'}}>
-                  <div className="card-text" style={{width: '50%'}}>Type</div>
-                  <div className="card-text" style={{width: '50%'}}>: {shipInfo[0][4]}</div>
-                </div>
-                <div style={{display: 'flex', flexDirection: 'row', gap: 5, width: '100%', textAlign: 'left'}}>
-                  <div className="card-text" style={{width: '50%'}}>Flag</div>
-                  <div className="card-text" style={{width: '50%'}}>: {shipInfo[0][5]}</div>
-                </div>
-              </Accordion.Body>
-            </Accordion.Item>
-            <Accordion.Item eventKey="1" style={{background: 'rgba(255,255,255,0.6)'}}>
-              <Accordion.Header>Voyage Information</Accordion.Header>
-              <Accordion.Body>
-                <div style={{display: 'flex', flexDirection: 'row', gap: 5, width: '100%', textAlign: 'left'}}>
-                  <div className="card-text" style={{width: '50%'}}>Origin</div>
-                  <div className="card-text" style={{width: '50%'}}>: {shipInfo[1][0]}</div>
-                </div>
-                <div style={{display: 'flex', flexDirection: 'row', gap: 5, width: '100%', textAlign: 'left'}}>
-                  <div className="card-text" style={{width: '50%'}}>Destination</div>
-                  <div className="card-text" style={{width: '50%'}}>: {shipInfo[1][1]}</div>
-                </div>
-                <div style={{display: 'flex', flexDirection: 'row', gap: 5, width: '100%', textAlign: 'left'}}>
-                  <div className="card-text" style={{width: '50%'}}>ETA</div>
-                  <div className="card-text" style={{width: '50%'}}>: {shipInfo[1][2]}</div>
-                </div>
-              </Accordion.Body>
-            </Accordion.Item>
-            <Accordion.Item eventKey="2" style={{background: 'rgba(255,255,255,0.6)'}}>
-              <Accordion.Header>Nearest Ships</Accordion.Header>
-              <Accordion.Body>
-                <div style={{display: 'flex', flexDirection: 'column', gap: 5, width: '100%', textAlign: 'left'}}>
-                  <ul style={{listStyleType: 'none', paddingLeft: 0}}>
-                    {shipInfo[2].map((item, index) => (
-                      <li key={index}>{index + 1}. {item}</li>
-                    ))}
-                  </ul>
-                </div>
-              </Accordion.Body>
-            </Accordion.Item>
-          </Accordion>
-          {/* <img src={RedMarker} width={1000} height={1000} style={{rotate: '90deg'}} /> */}
-        </div>
       </div>
   );
 }
 
-export default LiveMap;
+export default Coverages;
