@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react'
+import React, { useEffect, useState, useRef, forwardRef } from 'react'
 import { LayersControl, Popup, Marker, useMapEvent, DivIcon, ZoomControl} from "react-leaflet";
 import { MapContainer } from 'react-leaflet/MapContainer'
 import { TileLayer } from 'react-leaflet/TileLayer'
@@ -11,7 +11,8 @@ import shipsYellow from '../../Assets/ShipsYellow.svg'
 import L from 'leaflet';
 import './livemap.css';
 import SOS_Icon from '../../Assets/SOS_Icon.png'
-// import ReactLeafletDriftMarker from "react-leaflet-drift-marker"
+import { Button } from 'bootstrap';
+import "leaflet-rotatedmarker";
 
 
 function MousePosTracker({setMouse}) {
@@ -21,10 +22,30 @@ function MousePosTracker({setMouse}) {
 }
   
 function CustomRedMarker(props) {
+  const redMarker = new L.Icon({
+    iconUrl: ships,
+    iconSize: [50, 50],
+    iconAnchor: [25, 25],
+    popupAnchor: [0, -20]
+  });
+
+  const markerRef = useRef()
+
+  useEffect(() => {
+    const marker = markerRef.current;
+    if (marker) {
+      marker.setRotationAngle(props.details.ShipInfo.angle);
+      marker.setRotationOrigin("center");
+    }
+  }, [props.details.ShipInfo.angle]);
+
   return (
     <Marker 
+      ref={markerRef}
       position={[props.details.ShipInfo.lat, props.details.ShipInfo.long]} 
-      icon={props.markerGraph} 
+      icon={redMarker} 
+      rotationAngle = {props.details.ShipInfo.angle}
+      rotationOrigin = "center"
       eventHandlers={{
         mouseover: (event) =>{ 
           event.target.openPopup();
@@ -56,10 +77,19 @@ function CustomRedMarker(props) {
 }
 
 function CustomYellowMarker(props) {
+  const yellowMaker = new L.Icon({
+    iconUrl: shipsYellow,
+    iconSize: [40, 40],
+    iconAnchor: [20, 20],
+    popupAnchor: [0, -20]
+  });
+
   return (
     <Marker 
       position={[props.details.ShipInfo.lat, props.details.ShipInfo.long]} 
-      icon={props.markerGraph} 
+      icon={yellowMaker} 
+      rotationAngle = {props.details.ShipInfo.angle}
+      rotationOrigin = "center"
       eventHandlers={{
         mouseover: (event) =>{ 
           event.target.openPopup();
@@ -85,10 +115,17 @@ function CustomYellowMarker(props) {
 }
 
 function SOSMarker(props) {
+  const sosMaker = new L.Icon({
+    iconUrl: SOS_Icon,
+    iconSize: [30, 50],
+    iconAnchor: [15, 50]
+  });
+
   return (
     <Marker 
       position={[props.details.ShipInfo.lat, props.details.ShipInfo.long]} 
-      icon={props.markerGraph} >
+      icon={sosMaker} 
+      >
     </Marker>
   );
 }
@@ -140,31 +177,14 @@ function LiveMap({shipDatabase}){
 
   const { BaseLayer, Overlay } = LayersControl;
 
-  const redMarker = new L.Icon({
-    iconUrl: ships,
-    iconSize: [50, 50],
-    iconAnchor: [25, 25],
-    popupAnchor: [0, -20]
-  });
-
-  const yellowMaker = new L.Icon({
-    iconUrl: shipsYellow,
-    iconSize: [40, 40],
-    iconAnchor: [20, 20],
-    popupAnchor: [0, -20]
-  });
-
-  const sosMaker = new L.Icon({
-    iconUrl: SOS_Icon,
-    iconSize: [30, 50],
-    iconAnchor: [15, 50]
-  });
-
   useEffect(() => {
     if(secondaryMarkers.length != 0){
       let randTarget = getRandomInt(0, secondaryMarkers.length-1);
       secondaryMarkers[randTarget].emergencySOS = true;
       setRefresher(prev => !prev)
+      // testMap.current.setRotationOrigin("center")
+      // testMap.current.setRotationAngle(45)
+
     }
     const intervalId = setInterval(() => {
       if(secondaryMarkers.length != 0){
@@ -183,8 +203,17 @@ function LiveMap({shipDatabase}){
   }, [secondaryMarkers]);
 
   // useEffect(() => {
-  //   console.log(sosMakerList)
-  // }, [sosMakerList])
+  //   const spinner = setInterval(() => {
+  //     if(markers.length != 0){
+  //       markers[0].ShipInfo.angle += 10
+  //       console.log(markers[0].ShipInfo.angle)
+  //       setRefresher(prev => !prev)
+  //     }
+  //   }, 1000);
+  //   return () => {
+  //     clearInterval(spinner);
+  //   };
+  // }, [])
 
   useEffect(() => {
     if(mapRef.current == null) return;
@@ -194,6 +223,40 @@ function LiveMap({shipDatabase}){
       mapRef.current.setView(defaultPosition, defaultZoom)
     }
   }, [zoomMode])
+
+  const yellowMakertest = new L.Icon({
+    iconUrl: shipsYellow,
+    iconSize: [40, 40],
+    iconAnchor: [20, 20],
+    popupAnchor: [0, -20]
+  });
+
+  const RotatedMarker = forwardRef(({ children, ...props }, forwardRef) => {
+    const markerRef = useRef();
+  
+    const { rotationAngle, rotationOrigin } = props;
+    useEffect(() => {
+      const marker = markerRef.current;
+      if (marker) {
+        marker.setRotationAngle(rotationAngle);
+        marker.setRotationOrigin(rotationOrigin);
+      }
+    }, [rotationAngle, rotationOrigin]);
+  
+    return (
+      <Marker
+        ref={(ref) => {
+          markerRef.current = ref;
+          if (forwardRef) {
+            forwardRef.current = ref;
+          }
+        }}
+        {...props}
+      >
+        {children}
+      </Marker>
+    );
+  });
 
   return (
       <div style={{position: 'relative', height: '100%'}}>
@@ -235,7 +298,6 @@ function LiveMap({shipDatabase}){
                   return (
                     <CustomRedMarker key={index} 
                     details = {marker}
-                    markerGraph={redMarker}
                     setShowInfo={setShowHoverInfo}
                     setZoomMode={setZoomMode}
                     setSelectedMarkerPos={setSelectedMarkerPos} 
@@ -251,7 +313,6 @@ function LiveMap({shipDatabase}){
                   return (
                     <CustomYellowMarker key={index} 
                     details = {marker}
-                    markerGraph={yellowMaker}
                     setShowInfo={setShowHoverInfo}
                     setZoomMode={setZoomMode}
                     setSelectedMarkerPos={setSelectedMarkerPos}
@@ -266,7 +327,6 @@ function LiveMap({shipDatabase}){
                     return (
                       <SOSMarker key={index} 
                       details = {marker}
-                      markerGraph={sosMaker}
                       setShowInfo={setShowHoverInfo}
                       setZoomMode={setZoomMode}
                       setSelectedMarkerPos={setSelectedMarkerPos}
