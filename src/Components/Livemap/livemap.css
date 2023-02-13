@@ -3,9 +3,9 @@
     left: 100px;
 }
 
-  .leaflet-control-layers-toggle {
-    top: 5px;
-    left: 30px;
+.leaflet-control-layers-toggle {
+    left: 40px;
+    top: 40px;
     width: 30px !important;
     height: 30px !important;
 }
