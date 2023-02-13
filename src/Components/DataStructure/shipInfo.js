@@ -19,6 +19,6 @@ export default class ShipInfo{
       }
 
     getShipInfo(){
-        return [this.shipName, this.mmsi, this.lat, this.lon, this.type, this.flag, this.gt, this.dwt]
+        return [this.shipName, this.mmsi, this.lat, this.long, this.type, this.flag, this.gt, this.dwt]
     }
 }
