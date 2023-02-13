@@ -1,8 +1,36 @@
-.leaflet-control-layers-toggle {
+.leaflet-control-layers-toggle:hover + .leaflet-control-layers-expanded {
+    top: 100px;
+    left: 100px;
+}
+
+  .leaflet-control-layers-toggle {
+    top: 5px;
+    left: 30px;
     width: 30px !important;
     height: 30px !important;
 }
 
-.rotated-icon {
-    transform: rotate(45deg);
+.leaflet-control-layers {
+    top: -80px;
+    left: 5px;
+    border: none !important;
 }
+
+.leaflet-control-zoom {
+    outline: none !important;
+    box-shadow: none !important;
+    border: none !important;
+    top: 40px;
+    left: 5px;
+    display: flex;
+    flex-direction: column;
+}
+
+.leaflet-control-zoom-in {
+    margin-bottom: 5px;
+  }
+  
+  .leaflet-control-zoom-out {
+    margin-top: 5px;
+  }
+

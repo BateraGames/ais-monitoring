@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef, forwardRef } from 'react'
-import { LayersControl, Popup, Marker, useMapEvent, DivIcon, ZoomControl} from "react-leaflet";
+import { LayersControl, Popup, Marker, useMapEvent, DivIcon, ZoomControl, LayerGroup} from "react-leaflet";
 import { MapContainer } from 'react-leaflet/MapContainer'
 import { TileLayer } from 'react-leaflet/TileLayer'
 import Accordion from 'react-bootstrap/Accordion';
@@ -274,7 +274,8 @@ function LiveMap({shipDatabase, currentTab}){
                 />
               </LayersControl.BaseLayer>
 
-              <LayersControl.Overlay name="Marker with popup" checked={true}>
+              <LayersControl.Overlay name="Ships" checked={true}>
+                <LayerGroup>
                 {markers.map((marker, index) => {
                   return (
                     <CustomRedMarker key={index} 
@@ -318,6 +319,7 @@ function LiveMap({shipDatabase, currentTab}){
                     )
                   }
                 })}
+                </LayerGroup>
               </LayersControl.Overlay>
             </LayersControl>
           </MapContainer>
