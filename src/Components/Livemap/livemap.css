@@ -1,19 +1,26 @@
-.leaflet-control-layers-toggle:hover + .leaflet-control-layers-expanded {
-    top: 100px;
-    left: 100px;
-}
-
 .leaflet-control-layers-toggle {
-    left: 40px;
-    top: 40px;
+    left: 0;
+    top: 0;
     width: 30px !important;
     height: 30px !important;
 }
+
+/* .leaflet-control-layers-list{
+    top: 50x;
+    left: 50px;
+} */
+/* 
+.leaflet-control-layers-list{
+    top: 150px !important; 
+    left: 150px !important;
+    background-color: #000000;
+} */
 
 .leaflet-control-layers {
     top: -80px;
     left: 5px;
     border: none !important;
+    position: relative !important;
 }
 
 .leaflet-control-zoom {
