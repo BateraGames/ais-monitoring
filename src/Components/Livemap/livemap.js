@@ -1,5 +1,15 @@
 import React, { useEffect, useState, useRef, forwardRef } from 'react'
-import { LayersControl, Popup, Marker, useMapEvent, DivIcon, ZoomControl, LayerGroup} from "react-leaflet";
+import { 
+  LayersControl, 
+  Popup, 
+  Marker, 
+  useMapEvent, 
+  GeoJSON, 
+  DivIcon, 
+  ZoomControl, 
+  FeatureGroup, 
+  LayerGroup  
+} from "react-leaflet";
 import { MapContainer } from 'react-leaflet/MapContainer'
 import { TileLayer } from 'react-leaflet/TileLayer'
 import Accordion from 'react-bootstrap/Accordion';
@@ -9,6 +19,8 @@ import L from 'leaflet';
 import './livemap.css';
 import SOS_Icon from '../../Assets/SOS_Icon.png'
 import "leaflet-rotatedmarker";
+import bathymetry from '../../Assets/Data/Bathymetry/Indo_Bathymetry/bathymetry.json'
+
 
 
 function MousePosTracker({setMouse}) {
@@ -321,6 +333,28 @@ function LiveMap({shipDatabase, currentTab}){
                 })}
                 </LayerGroup>
               </LayersControl.Overlay>
+              
+              <LayersControl.Overlay name="Bathymetry">
+              <FeatureGroup>
+                {
+                  bathymetry.features.map((feature, index) => {
+                    const fillOpacity = 1 / (index + 1)
+                    return (
+                      <GeoJSON
+                       pathOptions={{ 
+                        color: 'blue', 
+                        fillColor: 'blue', 
+                        fillOpacity : fillOpacity ,
+                        opacity : fillOpacity,
+                        weight : 1
+                      }}
+                       data={bathymetry.features[index]} /> 
+                    )
+                  })
+                }
+              </FeatureGroup>
+              </LayersControl.Overlay>
+
             </LayersControl>
           </MapContainer>
         </div>

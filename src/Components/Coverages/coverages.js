@@ -1,5 +1,14 @@
 import React, { useEffect, useState, useRef, forwardRef } from 'react'
-import { LayersControl, Popup, Marker, useMapEvent, DivIcon, ZoomControl, LayerGroup} from "react-leaflet";
+import { 
+  LayersControl, 
+  Popup, 
+  Marker, 
+  useMapEvent, 
+  DivIcon, 
+  ZoomControl, 
+  LayerGroup, 
+  GeoJSON
+} from "react-leaflet";
 import { MapContainer } from 'react-leaflet/MapContainer'
 import { TileLayer } from 'react-leaflet/TileLayer'
 import Accordion from 'react-bootstrap/Accordion';
@@ -9,6 +18,8 @@ import L from 'leaflet';
 import '../Livemap/livemap.css';
 import SOS_Icon from '../../Assets/SOS_Icon.png'
 import "leaflet-rotatedmarker";
+import ZEE from '../../Assets/Data/ZEE Indonesia/ZEE.json'
+
 
 
 function MousePosTracker({setMouse}) {
@@ -247,6 +258,15 @@ function Coverages({shipDatabase, currentTab}){
             scrollWheelZoom={false}
             whenReady={fixSize}
             >
+
+            <GeoJSON
+            pathOptions={{ 
+            color: 'blue', 
+            fillColor: 'blue', 
+            weight : 1
+              }}
+            data={ZEE} />
+
             <MousePosTracker setMouse={setMousePos} />
             <LayersControl position="topleft">
               <LayersControl.BaseLayer name="OpenStreetMap" checked={true}>
