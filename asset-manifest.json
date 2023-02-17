@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "./static/css/main.a5ed65cb.css",
-    "main.js": "./static/js/main.3a734c55.js",
+    "main.js": "./static/js/main.fc4b5dac.js",
     "static/media/logo batera kapal pintar-BW.png": "./static/media/logo batera kapal pintar-BW.0d2d8859f413a286560a.png",
     "static/media/SOS_Icon.png": "./static/media/SOS_Icon.ae29c91427c087a404b8.png",
     "static/media/logo.svg": "./static/media/logo.6ce24c58023cc2f8fd88fe9d219db6c6.svg",
@@ -9,10 +9,10 @@
     "static/media/ShipsYellow.svg": "./static/media/ShipsYellow.4d3291a0d383822f7340f40798515bd5.svg",
     "static/media/Ships.svg": "./static/media/Ships.eda0adde6ec30fe60fc4eac50661fb2f.svg",
     "main.a5ed65cb.css.map": "./static/css/main.a5ed65cb.css.map",
-    "main.3a734c55.js.map": "./static/js/main.3a734c55.js.map"
+    "main.fc4b5dac.js.map": "./static/js/main.fc4b5dac.js.map"
   },
   "entrypoints": [
     "static/css/main.a5ed65cb.css",
-    "static/js/main.3a734c55.js"
+    "static/js/main.fc4b5dac.js"
   ]
 }
